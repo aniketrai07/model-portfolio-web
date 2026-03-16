@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Current Investments</h2>
+
+<form method="GET" action="{{ url_for('investments') }}">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label"><strong>Select Client</strong></label>
+                    <select name="client_id" class="form-select">
+                        {% for c in clients %}
+                            <option value="{{ c.client_id }}" {% if c.client_id == client.client_id %}selected{% endif %}>
+                                {{ c.client_name }} ({{ c.client_id }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Show Investments</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4 class="mb-2">{{ client.client_name }}</h4>
+            <p class="mb-0"><strong>Client ID:</strong> {{ client.client_id }}</p>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Holding ID</th>
+                <th>Fund ID</th>
+                <th>Fund Name</th>
+                <th>Current Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in holdings %}
+            <tr>
+                <td>{{ item.holding_id }}</td>
+                <td>{{ item.fund_id }}</td>
+                <td>{{ item.fund_name }}</td>
+                <td>₹{{ item.current_value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+body {
+    background-color: #f5f7fb;
+}
+
+.card {
+    border-radius: 14px;
+    border: 1px solid #d9dee7;
+}
+
+.table {
+    background: white;
+}
+
+.form-control,
+.form-select,
+.btn {
+    border-radius: 10px;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Recommendation History</h2>
+
+{% if sessions %}
+    {% for session in sessions %}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">Session ID: {{ session.session_id }}</h5>
+            <p class="mb-1"><strong>Client ID:</strong> {{ session.client_id }}</p>
+            <p class="mb-1"><strong>Created At:</strong> {{ session.created_at }}</p>
+            <p class="mb-1"><strong>Portfolio Value:</strong> ₹{{ session.portfolio_value }}</p>
+            <p class="mb-1"><strong>Total Buy:</strong> ₹{{ session.total_to_buy }}</p>
+            <p class="mb-1"><strong>Total Sell:</strong> ₹{{ session.total_to_sell }}</p>
+            <p class="mb-1"><strong>Net Cash Needed:</strong> ₹{{ session.net_cash_needed }}</p>
+            <p class="mb-3">
+                <strong>Status:</strong>
+                {% if session.status == 'PENDING' %}
+                    <span class="badge bg-warning text-dark">PENDING</span>
+                {% elif session.status == 'APPLIED' %}
+                    <span class="badge bg-success">APPLIED</span>
+                {% elif session.status == 'DISMISSED' %}
+                    <span class="badge bg-danger">DISMISSED</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ session.status }}</span>
+                {% endif %}
+            </p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Fund ID</th>
+                            <th>Fund Name</th>
+                            <th>Action</th>
+                            <th>Amount</th>
+                            <th>Current %</th>
+                            <th>Target %</th>
+                            <th>Post Rebalance %</th>
+                            <th>Model Fund</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in session.rebalance_items %}
+                        <tr>
+                            <td>{{ item.fund_id }}</td>
+                            <td>{{ item.fund_name }}</td>
+                            <td>{{ item.action }}</td>
+                            <td>₹{{ item.amount }}</td>
+                            <td>{{ item.current_pct }}%</td>
+                            <td>{{ item.target_pct }}%</td>
+                            <td>{{ item.post_rebalance_pct }}%</td>
+                            <td>
+                                {% if item.is_model_fund == 1 %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">No recommendation history found.</div>
+{% endif %}
+{% endblock %}

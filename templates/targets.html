@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Target Settings</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <p class="mb-0">
+            Edit model portfolio target allocation here.  
+            These changes will be saved in the database and used in comparison for all clients.
+        </p>
+    </div>
+</div>
+
+<form method="POST" action="{{ url_for('targets') }}">
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fund ID</th>
+                    <th>Fund Name</th>
+                    <th>Asset Class</th>
+                    <th>Target Allocation %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fund in funds %}
+                <tr>
+                    <td>{{ fund.fund_id }}</td>
+                    <td>{{ fund.fund_name }}</td>
+                    <td>{{ fund.asset_class }}</td>
+                    <td>
+                        <input
+                            type="number"
+                            name="target_{{ fund.fund_id }}"
+                            step="0.01"
+                            class="form-control"
+                            value="{{ fund.allocation_pct }}"
+                            required
+                        >
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Target Changes</button>
+</form>
+{% endblock %}

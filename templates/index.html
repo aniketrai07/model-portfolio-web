@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Portfolio Comparison</h2>
+
+<form method="GET" action="{{ url_for('index') }}">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label"><strong>Select Client</strong></label>
+                    <select name="client_id" class="form-select">
+                        {% for c in clients %}
+                            <option value="{{ c.client_id }}" {% if c.client_id == client.client_id %}selected{% endif %}>
+                                {{ c.client_name }} ({{ c.client_id }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">Update Comparison</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4 class="mb-3">{{ client.client_name }}</h4>
+            <p class="mb-1"><strong>Client ID:</strong> {{ client.client_id }}</p>
+            <p class="mb-1"><strong>Total Invested:</strong> ₹{{ client.total_invested }}</p>
+            <p class="mb-0"><strong>Current Portfolio Value:</strong> ₹{{ total_value }}</p>
+        </div>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-success-subtle">
+            <div class="card-body">
+                <h5>Total Buy</h5>
+                <p class="mb-0 fs-4">₹{{ total_buy }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-danger-subtle">
+            <div class="card-body">
+                <h5>Total Sell</h5>
+                <p class="mb-0 fs-4">₹{{ total_sell }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-primary-subtle">
+            <div class="card-body">
+                <h5>Net Cash Needed</h5>
+                <p class="mb-0 fs-4">₹{{ net_cash_needed }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="POST" action="{{ url_for('save_recommendation') }}">
+    <input type="hidden" name="client_id" value="{{ client.client_id }}">
+    <button type="submit" class="btn btn-dark mb-3">Save Recommendation</button>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Fund ID</th>
+                <th>Fund Name</th>
+                <th>Current Value</th>
+                <th>Current %</th>
+                <th>Target %</th>
+                <th>Target Value</th>
+                <th>Difference</th>
+                <th>Action</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in rebalance_data %}
+            <tr>
+                <td>{{ item.fund_id }}</td>
+                <td>{{ item.fund_name }}</td>
+                <td>₹{{ item.current_value }}</td>
+                <td>{{ item.current_pct }}%</td>
+                <td>{{ item.target_pct }}%</td>
+                <td>₹{{ item.target_value }}</td>
+                <td>₹{{ item.difference }}</td>
+                <td>
+                    {% if item.action == 'BUY' %}
+                        <span class="badge bg-success">BUY</span>
+                    {% elif item.action == 'SELL' %}
+                        <span class="badge bg-danger">SELL</span>
+                    {% elif item.action == 'REVIEW' %}
+                        <span class="badge bg-warning text-dark">REVIEW</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ item.action }}</span>
+                    {% endif %}
+                </td>
+                <td>₹{{ item.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
