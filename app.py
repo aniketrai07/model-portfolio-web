@@ -2,11 +2,29 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
 from datetime import datetime
+import shutil
 
 app = Flask(__name__)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE = os.environ.get("DATABASE_PATH", os.path.join(BASE_DIR, "model_portfolio.db"))
+LOCAL_DB_PATH = os.path.join(BASE_DIR, "model_portfolio.db")
+DISK_DB_PATH = "/var/data/model_portfolio.db"
+
+# If Render disk exists, use it.
+# If disk DB doesn't exist yet, copy the repo DB there once.
+if os.path.exists("/var/data"):
+    os.makedirs("/var/data", exist_ok=True)
+    if not os.path.exists(DISK_DB_PATH) and os.path.exists(LOCAL_DB_PATH):
+        shutil.copy2(LOCAL_DB_PATH, DISK_DB_PATH)
+    DATABASE = DISK_DB_PATH
+else:
+    DATABASE = LOCAL_DB_PATH
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 def get_db_connection():
